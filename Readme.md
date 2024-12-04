@@ -18,12 +18,15 @@
 ```
 {
   "data": {
-    "predicted_stress": "Moderate",
+    "predicted_stress": {
+      "score": "2.34",
+      "stress_level": "High"
+    },
     "recommendations": [
       {
-        "description": "Mengurangi kontak akan melindungi Anda dari manipulasi dan stres lebih lanjut.",
-        "icon": "Rekomendasi Umum",
-        "title": "Batasi atau hentikan semua kontak dengan mantan Anda."
+        "description": "Terapis dapat membantu Anda memproses emosi yang kompleks terkait dengan perpisahan dan mengembangkan mekanisme koping yang sehat.",
+        "icon": "Konseling",
+        "title": "Pertimbangkan Konseling"
       }
     ]
   },

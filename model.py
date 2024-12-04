@@ -12,12 +12,16 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 
+
+with open("./database/score_data.json", "r") as file:
+    my_data = json.load(file)
+
 with open("./database/recommended_activities.json", "r") as file:
     recommended_activities = json.load(file)
 model = load_model('./model/model_stress_level.keras')
 scaler = pickle.load(open('./model/scaler.pkl', 'rb'))
 tokenizer = pickle.load(open('./model/tokenizer.pkl', 'rb'))
-
+model_score = load_model('./model/model_skor.keras')
     
 def get_recommendations(stress_level, journal_text):
     matched_categories = match_keywords_in_journal(journal_text)
@@ -59,6 +63,51 @@ keyword_categories = {
     "identifikasi": ["identifikasi"]
 }
 
+my_data = {
+    "low": {
+        'Tidur': 9, 'Pola makan': 9, 'Meditasi': 10, 'Konseling': 9, 'Hotline': 8, 'Komunikasi': 9,
+        'Identifikasi': 8, 'Atur emosi': 9, 'Hubungi orang tua': 8, 'Menggambar': 9, 'Olahraga': 10,
+        'Sosialisasi': 9, 'Hobi': 9, 'Bantuan professional': 10, 'Perawatan diri': 9, 'Rekomendasi Umum': 7,
+        'Hubungi teman': 8, 'Kelola waktu': 9, 'Atur keuangan': 7, 'Pengobatan': 10, 'Media sosial': 6
+    },
+    "moderate": {
+        'Meditasi': 6, 'Hotline': 5, 'Sosialisasi': 5, 'Olahraga': 6, 'Bantuan professional': 6,
+        'Rekomendasi Umum': 4, 'Hobi': 5, 'Komunikasi': 5, 'Konseling': 6, 'Tidur': 6, 'Perawatan diri': 6,
+        'Afirmasi diri': 6, 'Pengobatan': 5, 'Identifikasi': 4, 'Media sosial': 3, 'Atur keuangan': 5,
+        'Hubungi orang tua': 5, 'Hubungi teman': 5, 'Atur emosi': 4, 'Kelola waktu': 5, 'Kafein dan alkohol': 2,
+        'Pola makan': 4
+    },
+    "high": {
+        "Komunikasi": -2, "Konseling": -1, "Meditasi": -1, "Tidur": 0, "Bantuan professional": -2,
+        "Rekomendasi Umum": -3, "Olahraga": -1, "Identifikasi": -4, "Media sosial": -8, "Sosialisasi": -3,
+        "Perawatan diri": -2, "Hotline": -5, "Hubungi teman": -3, "Atur keuangan": -6, "Afirmasi diri": -2,
+        "Pengobatan": -3, "Hubungi orang tua": -2, "Atur emosi": -4, "Hobi": -1, "Kelola waktu": -4,
+        "Pola makan": -2, "Kafein dan alcohol": -10
+    }
+}
+
+# Menyiapkan data untuk digunakan dalam model
+def prepare_data(data):
+    rows = []
+    scores = []
+    categories = list(data.keys())
+    
+    for category in categories:
+        for activity, score in data[category].items():
+            # Menambahkan data untuk kategori, aktivitas, dan skor
+            rows.append([category, activity])
+            scores.append(score)
+    
+    # Mengonversi data menjadi numpy array
+    return np.array(rows), np.array(scores)
+
+# Menyiapkan data untuk model
+X, y = prepare_data(my_data)
+
+# Menyusun fitur: Kategori dan Aktivitas
+category_encoder = {category: idx for idx, category in enumerate(np.unique(X[:, 0]))}
+activity_encoder = {activity: idx for idx, activity in enumerate(np.unique(X[:, 1]))}
+
 
 def process_journal(journal_text):
     # Tokenisasi dan penghapusan stopwords
@@ -78,6 +127,18 @@ def match_keywords_in_journal(journal_text):
             matched_categories.append(category)
 
     return matched_categories
+
+
+
+def predict_score(category, activity):
+    # Encode input kategori dan aktivitas
+    encoded_input = np.array([[category_encoder[category], activity_encoder[activity]]])
+    predicted_score = model_score.predict(encoded_input)
+    
+    number = max(-10, min(10, predicted_score[0][0]))
+    
+    return number
+
 
 def getAllRecommended(waktu_belajar, waktu_belajar_tambahan, waktu_tidur, aktivitas_sosial, aktivitas_fisik, jurnal_harian):
     fitur_numeric = np.array([[waktu_belajar,waktu_belajar_tambahan,waktu_tidur,aktivitas_sosial,aktivitas_fisik]])
@@ -99,8 +160,12 @@ def getAllRecommended(waktu_belajar, waktu_belajar_tambahan, waktu_tidur, aktivi
     # print(f"Tingkat Stres: {predicted_stress}")
 
     recommendations = get_recommendations(predicted_stress, jurnal_harian)
+    get_scores = predict_score(predicted_stress.lower(), recommendations[0]['icon'])
     
     return {
-        "predicted_stress": predicted_stress,
+        "predicted_stress": {
+            "stress_level": predicted_stress,
+            "score": f"{get_scores:.2f}"
+        },
         "recommendations": recommendations
     }

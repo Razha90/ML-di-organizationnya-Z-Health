@@ -1,0 +1,22 @@
+{
+  "low": {
+      "Tidur": 9, "Pola makan": 9, "Meditasi": 10, "Konseling": 9, "Hotline": 8, "Komunikasi": 9,
+      "Identifikasi": 8, "Atur emosi": 9, "Hubungi orang tua": 8, "Menggambar": 9, "Olahraga": 10,
+      "Sosialisasi": 9, "Hobi": 9, "Bantuan professional": 10, "Perawatan diri": 9, "Rekomendasi Umum": 7,
+      "Hubungi teman": 8, "Kelola waktu": 9, "Atur keuangan": 7, "Pengobatan": 10, "Media sosial": 6
+  },
+  "moderate": {
+      "Meditasi": 6, "Hotline": 5, "Sosialisasi": 5, "Olahraga": 6, "Bantuan professional": 6,
+      "Rekomendasi Umum": 4, "Hobi": 5, "Komunikasi": 5, "Konseling": 6, "Tidur": 6, "Perawatan diri": 6,
+      "Afirmasi diri": 6, "Pengobatan": 5, "Identifikasi": 4, "Media sosial": 3, "Atur keuangan": 5,
+      "Hubungi orang tua": 5, "Hubungi teman": 5, "Atur emosi": 4, "Kelola waktu": 5, "Kafein dan alkohol": 2,
+      "Pola makan": 4
+  },
+  "high": {
+      "Komunikasi": -2, "Konseling": -1, "Meditasi": -1, "Tidur": 0, "Bantuan professional": -2,
+      "Rekomendasi Umum": -3, "Olahraga": -1, "Identifikasi": -4, "Media sosial": -8, "Sosialisasi": -3,
+      "Perawatan diri": -2, "Hotline": -5, "Hubungi teman": -3, "Atur keuangan": -6, "Afirmasi diri": -2,
+      "Pengobatan": -3, "Hubungi orang tua": -2, "Atur emosi": -4, "Hobi": -1, "Kelola waktu": -4,
+      "Pola makan": -2, "Kafein dan alcohol": -10
+  }
+}
